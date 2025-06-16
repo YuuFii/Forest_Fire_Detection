@@ -20,11 +20,11 @@ Hasil dari analisis ini kemudian disajikan melalui monitoring dashboard dalam be
 1. Mengapa Mengirim Heartbeat dan Data Lengkap Secara Terpisah?
 Pemisahan antara pengiriman heartbeat (indikasi bahwa sensor aktif) dan data lengkap saat terjadi anomali bertujuan untuk menghemat bandwidth dan menghindari pengiriman data secara berlebihan. Heartbeat yang dikirim setiap 30 detik memastikan sensor tetap terpantau aktif, sementara data penuh hanya dikirim saat dibutuhkan yaitu ketika terjadi perubahan parameter signifikan yang mengindikasikan adanya potensi kebakaran.
 
-2. Mengapa Menggunakan MQTT Broker?
-Protokol MQTT dipilih karena ringan dan efisien untuk komunikasi IoT. MQTT menggunakan pendekatan publish-subscribe yang sangat sesuai untuk sistem dengan banyak sensor dan edge gateway. Ini memungkinkan sistem tetap skalabel dan hemat energi, khususnya dalam jaringan yang terbatas bandwidth-nya seperti di hutan atau daerah terpencil.
+2. Mengapa Alert dikirim dalam format JSON?
+Karena JSON merupakan format data yang ringan, mudah dibaca oleh manusia, serta mudah diproses secara otomatis oleh sistem.
 
 3. Mengapa Edge Gateway Melakukan Validasi dan Agregasi Data?
-Edge Gateway berperan dalam menyaring dan merangkum data sebelum diteruskan ke server pusat. Tujuannya adalah mengurangi beban data yang harus dikirim. Validasi juga penting untuk memastikan data yang masuk tidak cacat atau tidak valid. Agregasi memungkinkan sistem menyampaikan informasi yang lebih ringkas dan relevan untuk pengambilan keputusan yang cepat.
+Edge Gateway berperan dalam menyaring dan merangkum data sebelum diteruskan ke server pusat. Tujuannya adalah mengurangi beban data yang harus dikirim. Agregasi memungkinkan sistem menyampaikan informasi yang lebih ringkas dan relevan untuk pengambilan keputusan yang cepat.
 
 4. Mengapa Server Menentukan Threshold?
 Penentuan threshold oleh server bertujuan untuk meminimalkan alarm palsu (false alarm) dan memastikan bahwa hanya kondisi yang benar-benar menunjukkan potensi bahaya yang akan ditindaklanjuti. Dengan menerapkan ambang batas yang tepat, sistem dapat membedakan antara fluktuasi normal dan kejadian yang perlu direspons secara serius.
