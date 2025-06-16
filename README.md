@@ -74,6 +74,21 @@ Sistem Deteksi Dini Kebakaran Hutan berbasis simulasi sensor, komunikasi MQTT, d
 6. [Reproduksi Sistem](#reproduksi-sistem)
 7. [Lisensi](#lisensi)
 
+## 🧩 Komponen Sistem
+### 1. Sensor Node (Publisher)
+- Mengirim data sensor simulasi setiap detik.
+- Publish ke MQTT topic: forest/area/{lokasi}/sensor/{id}.
+- Library: paho-mqtt, random.
+### 2. Edge Gateway (Subscriber + Analyzer)
+- Subscribe semua topik sensor.
+- Validasi dan deteksi anomali berbasis threshold.
+- Kirim alert ke Cloud Server melalui REST API (POST /alert).
+### 3. Cloud Receiver (FastAPI)
+- Menerima data alert (/alert) dan menyimpan history.
+- Menyediakan endpoint /alerts untuk visualisasi.
+### 4. Monitoring Dashboard (Heatmap Web)
+- Fetch data dari /alerts dan menampilkan heatmap lokasi sensor.
+- Dibuat menggunakan HTML + Leaflet.js + Leaflet.heat + Fetch API.
 
 ## Persyaratan Sistem
 
@@ -100,13 +115,13 @@ Sistem Deteksi Dini Kebakaran Hutan berbasis simulasi sensor, komunikasi MQTT, d
 
 ## 📥 Instalasi & Setup
 
-### 1. Clone Repository
+### 1. Clone Repository & Install Dependencies
 ```bash
 # Clone repository
 git clone https://github.com/YuuFii/Project_SisTer.git
 cd Project_SisTer
 
-# Buat virtual environment
+# Buat virtual environment (opsional tapi disarankan)
 python -m venv venv
 
 # Aktifkan virtual environment
@@ -114,89 +129,44 @@ python -m venv venv
 venv\Scripts\activate
 # Linux/Mac
 source venv/bin/activate
-```
 
-### 2. Install Dependencies
-```bash
-# Install semua dependencies
-pip install flask paho-mqtt
+# Install requirements
+pip install -r requirements.txt
 ```
 
 ## Konfigurasi
 
-### 1. Konfigurasi Sensor Node (`sensor_node.py`)
+### Konfigurasi Sensor Node
 Parameter yang dapat dikonfigurasi:
 ```python
-# Parameter Simulasi
-current_temp = 25.0
-current_humidity = 70.0
-current_smoke = 50  # ppm
-current_pm25 = 15   # µg/m³
-
-# Batasan nilai
-current_temp = max(15.0, min(current_temp, 100.0))
-current_humidity = max(20.0, min(current_humidity, 100.0))
-current_smoke = max(0, min(current_smoke, 1000))
-current_pm25 = max(0, min(current_pm25, 500))
-
-# Heartbeat interval (detik)
-heartbeat_interval = 30
-```
-
-### 2. Konfigurasi Server Node (`server_node.py`)
-Parameter yang dapat dikonfigurasi:
-```python
-# MQTT Topics
-TOPICS = [
-    "forest/area/+/sensor/+/temperature",
-    "forest/area/+/sensor/+/humidity",
-    "forest/area/+/sensor/+/smoke",
-    "forest/area/+/sensor/+/pm25",
-    "forest/area/+/sensor/+/status"
-]
-
-# Thread Pool Configuration
-executor = ThreadPoolExecutor(max_workers=10)
-
-# Fire Detection Thresholds
-def is_fire_condition(data):
-    temp = data.get("temperature")
-    humidity = data.get("humidity")
-    smoke = data.get("smoke")
-    pm25 = data.get("pm25")
-
-    if temp and temp > 45 and humidity < 30 and smoke > 200 and pm25 > 150:
-        return True
-    return False
-```
-
-### 3. Konfigurasi Web Dashboard (`app.py`)
-```python
-# Flask Configuration
-app.run(debug=False, port=5000)
+# Konfigurasi sensor dengan lokasi & koordinat
+SENSOR_CONFIG = {
+    "sensor_01": {"location": "kalimantan_barat", "lat": -0.062, "lon": 109.342},
+    "sensor_02": {"location": "kalimantan_barat", "lat": 0.152, "lon": 109.312},
+    "sensor_03": {"location": "kalimantan_barat", "lat": 0.256, "lon": 109.562}
+}
 ```
 
 ## ▶️ Menjalankan Sistem
 
-### 1. Menjalankan Server Node
+### 1. Menjalankan Cloud Receiver
 ```bash
-# Terminal 1
-python server_node.py
+uvicorn cloud_receiver:app --reload --port 8000
 ```
 
-### 2. Menjalankan Sensor Nodes
+### 2. Menjalankan Edge Gateway
 ```bash
-# Terminal 2 - Sensor 1
-python sensor_node.py --node_id sensor01 --location jakarta
-
-# Terminal 3 - Sensor 2
-python sensor_node.py --node_id sensor02 --location bandung
+python edge_gateway.py
 ```
 
-### 3. Menjalankan Web Dashboard
+### 3. Menjalankan Sensor Nodes (multi-threaded)
 ```bash
-# Terminal 4
-python app.py
+python sensor_nodes.py
+```
+### 4. Menjalankan Web Dashboard (Heatmap)
+```bash
+cd dashboard
+python -m http.server 5500
 ```
 
 ## 🧪 Pengujian
@@ -212,35 +182,13 @@ python app.py
 - Alert akan dikirim ketika terdeteksi kondisi kebakaran:
   - Suhu > 45°C
   - Kelembaban < 30%
-  - Asap > 200 ppm
-  - PM2.5 > 150 µg/m³
+  - Dll.
 
 ### 3. Pengujian Web Dashboard
-- Buka browser dan akses `http://localhost:5000`
+- Buka browser dan akses `[http://localhost:5500/heatmap.html](http://localhost:5500/heatmap.html
+)`
 - Dashboard akan menampilkan data sensor real-time
 - Alert akan muncul ketika terdeteksi kebakaran
-
-## 🔁 Reproduksi Sistem
-
-### 🛠️ Setup Environment
-- Install Python 3.8
-- Install dependencies (`pip install flask paho-mqtt`)
-- Setup MQTT broker (default: `broker.hivemq.com`)
-
-### ⚙️ Konfigurasi Sensor
-- Sesuaikan parameter di `sensor_node.py`
-- Atur lokasi dan ID sensor
-- Sesuaikan threshold deteksi kebakaran
-
-### 🚀 Deployment
-- Jalankan server node (`python server_node.py`)
-- Jalankan sensor nodes (`python sensor_node.py --node_id ... --location ...`)
-- Jalankan web dashboard (`python app.py`)
-
-### 🧩 Monitoring
-- Monitor log terminal untuk debugging
-- Cek status sensor melalui web dashboard
-- Verifikasi sistem alert berfungsi saat kondisi kebakaran terdeteksi
 
 ## 📝 Lisensi
 Proyek ini menggunakan lisensi bebas untuk keperluan pembelajaran dan pengembangan lebih lanjut.
