@@ -32,6 +32,7 @@ Edge Gateway berperan dalam menyaring dan merangkum data sebelum diteruskan ke s
 4. Mengapa Server Menentukan Threshold?
 Penentuan threshold oleh server bertujuan untuk meminimalkan alarm palsu (false alarm) dan memastikan bahwa hanya kondisi yang benar-benar menunjukkan potensi bahaya yang akan ditindaklanjuti. Dengan menerapkan ambang batas yang tepat, sistem dapat membedakan antara fluktuasi normal dan kejadian yang perlu direspons secara serius.
 
+## Arsitektur Sistem
 
 ![Arsitektur Diagram Sistem](https://github.com/user-attachments/assets/bc2ad243-8d75-4108-aa56-980ddc5ace09)
 
