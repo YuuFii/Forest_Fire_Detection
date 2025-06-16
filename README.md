@@ -31,3 +31,30 @@ Edge Gateway berperan dalam menyaring dan merangkum data sebelum diteruskan ke s
 
 4. Mengapa Server Menentukan Threshold?
 Penentuan threshold oleh server bertujuan untuk meminimalkan alarm palsu (false alarm) dan memastikan bahwa hanya kondisi yang benar-benar menunjukkan potensi bahaya yang akan ditindaklanjuti. Dengan menerapkan ambang batas yang tepat, sistem dapat membedakan antara fluktuasi normal dan kejadian yang perlu direspons secara serius.
+
+
+![Arsitektur Diagram Sistem](https://github.com/user-attachments/assets/bc2ad243-8d75-4108-aa56-980ddc5ace09)
+
+## HOW (BAGAIMANA ARSITKETUR SISTEM BERINTERAKSI)
+
+Diagram diatas menggambarkan arsitektur system yang bekerja berdasarkan arsitketur Publisher-Subscriber dengan menggunakan MQTT Broker oleh HiveMQ Cloud sebagai pusat komunikasinya. Terdapat beberapa Sensor Node yang bekerja untuk mengumpulkan data lingkungan (suhu, kelembapan, dll) dari lokasi masing masing yang kemudian dikirim ke HiveMQ Cloud dengan protokol MQTT. Setiap sensor akan mempublikasi data dalam format JSON dengan topik 
+forest/area/[location]/sensor/[node_id]/[sensor_type] 
+(contoh: forest/area/sumatra/sensor/node1/temperature).
+Broker kemudian akan menerima data dari publisher dan akan meneruskannya kepada subscriber yang berlangganan pada topik terkait yaitu Server Node. 
+Server node akan berlangganan pada semua topik dalam sensor (forest/area/+/sensor/+/+) untuk memperoleh semua data dalam setiap sensor. Kemudian akan dilakukan analisis untuk mendeteksi kebakaran berdasarkan parameter yang telah ditentukan. Apabila terdeteksi bahwa data menunjukan adanya tanda tanda kebakaran maka akan dikirim sebuah pesan dengan topik forest/alert/[location]/[node_id].
+Flask Dahsborad digunakan untuk menampilkan data yang diperoleh sensor melalui sebuah web secara real time.
+
+## WHY (MENGAPA DIBANGUN DENGAN ARSITEKTUR INI)
+
+1. Mengapa digunakan pola Pub/Sub dengan MQTT?
+Digunakan arsitektur MQTT sehingga setiap node dapat bekerja secara independent dan tidak akan mempengaruhi komponen lain apabila terjadi permasalahan pada salah satu komponen. Node sensor dan Node Server hanya perlu mengetahui topik MQTT untuk diperoleh informasi. MQTT memiliki bandwith yang efisien dan mendukung QoS 1 sehingga alert harus terkirim setidaknya sekali. Selain itu didukungnya fitur Last Will & Testament (LWT) yang akan menguirim pesan akhir atau "last will" apabila koneksi pada node sensor terputus. Faktor tersebut menjadi alas an Utama digunakannya MQTT disbanding arsitektur lain. 
+
+2. Mengapa sistem bersifat event-driven?
+Karena kejadian seperti kebakaran hutan memiliki urgensi dalam peringatan yang lebih awal sehingga dipilih pemrosesan yang lebih reaktif yaitu event-driven. Node sensor akan menerima data lingkungan dan node server akan menganalisis data untuk menentukan apakah data lebihi parameter yang menandakan adanya kebakaran hutan. Arsitektur seperti Polling-Based tidak cocok karena sensor harus terus menjawab request dan memiliki latensi yang tinggi, Request-response tidak cocok karena sensor harus menunggu permintaan server sehingga tidak cocok untuk data kontinu. 
+
+3. Megapa digunakan Heartbeat dan LWT?
+Heartbeat akan mengirim pesan untuk mengindikasikan bahwa sensor masih aktif dan dikirim secara rutin untuk memastikan bahwa node sensor tetap aktif. Kemudian LWT atau Last Will & Testament akan secara langsung mengirimkan pesan bahwa sensor offline apabila sensor mati atau terjadi failure secara mendadak. Keduanya digunakan secara bersamaan sehingga server dapat mengetahui keadaan sensor setiap saat.  
+
+4. Mengapa Alert system terpisah dari Data Stream?
+Data dalam sensor bertopik sensors/# dan alert bertopik alter/# dipisah untuk memprioritaskan pengiriman alter yang memeiliki tingkat urgensi yang lebih tinggi sehingga peringatan kebarakan dapat disampaikan secara lnagsung setelah diperolehnya data yang mengidikasikan adanya kebakaran. Pemisahan ini juga dilakukan untuk mempermudah filtering dalam dashboard. 
+
