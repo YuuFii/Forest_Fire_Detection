@@ -36,7 +36,7 @@ Penentuan threshold oleh server bertujuan untuk meminimalkan alarm palsu (false 
 
 ![Arsitektur Diagram Sistem](https://github.com/user-attachments/assets/bc2ad243-8d75-4108-aa56-980ddc5ace09)
 
-## HOW (BAGAIMANA ARSITKETUR SISTEM BERINTERAKSI)
+**✅ HOW (BAGAIMANA ARSITKETUR SISTEM BERINTERAKSI)**
 
 Diagram diatas menggambarkan arsitektur system yang bekerja berdasarkan arsitketur Publisher-Subscriber dengan menggunakan MQTT Broker oleh HiveMQ Cloud sebagai pusat komunikasinya. Terdapat beberapa Sensor Node yang bekerja untuk mengumpulkan data lingkungan (suhu, kelembapan, dll) dari lokasi masing masing yang kemudian dikirim ke HiveMQ Cloud dengan protokol MQTT. Setiap sensor akan mempublikasi data dalam format JSON dengan topik 
 forest/area/[location]/sensor/[node_id]/[sensor_type] 
@@ -45,7 +45,7 @@ Broker kemudian akan menerima data dari publisher dan akan meneruskannya kepada 
 Server node akan berlangganan pada semua topik dalam sensor (forest/area/+/sensor/+/+) untuk memperoleh semua data dalam setiap sensor. Kemudian akan dilakukan analisis untuk mendeteksi kebakaran berdasarkan parameter yang telah ditentukan. Apabila terdeteksi bahwa data menunjukan adanya tanda tanda kebakaran maka akan dikirim sebuah pesan dengan topik forest/alert/[location]/[node_id].
 Flask Dahsborad digunakan untuk menampilkan data yang diperoleh sensor melalui sebuah web secara real time.
 
-## WHY (MENGAPA DIBANGUN DENGAN ARSITEKTUR INI)
+**🔍 WHY (MENGAPA DIBANGUN DENGAN ARSITEKTUR INI) **
 
 1. Mengapa digunakan pola Pub/Sub dengan MQTT?
 Digunakan arsitektur MQTT sehingga setiap node dapat bekerja secara independent dan tidak akan mempengaruhi komponen lain apabila terjadi permasalahan pada salah satu komponen. Node sensor dan Node Server hanya perlu mengetahui topik MQTT untuk diperoleh informasi. MQTT memiliki bandwith yang efisien dan mendukung QoS 1 sehingga alert harus terkirim setidaknya sekali. Selain itu didukungnya fitur Last Will & Testament (LWT) yang akan menguirim pesan akhir atau "last will" apabila koneksi pada node sensor terputus. Faktor tersebut menjadi alas an Utama digunakannya MQTT disbanding arsitektur lain. 
