@@ -59,9 +59,11 @@ Heartbeat akan mengirim pesan untuk mengindikasikan bahwa sensor masih aktif dan
 4. Mengapa Alert system terpisah dari Data Stream?
 Data dalam sensor bertopik sensors/# dan alert bertopik alter/# dipisah untuk memprioritaskan pengiriman alter yang memeiliki tingkat urgensi yang lebih tinggi sehingga peringatan kebarakan dapat disampaikan secara lnagsung setelah diperolehnya data yang mengidikasikan adanya kebakaran. Pemisahan ini juga dilakukan untuk mempermudah filtering dalam dashboard. 
 
-## Panduan Reproduce Sistem SisTer
+## Reproduce Project SisTer 🔥🌲
 
-Dokumen ini memberikan panduan langkah demi langkah untuk mereproduksi sistem monitoring kebakaran hutan SisTer.
+Sistem Deteksi Dini Kebakaran Hutan berbasis simulasi sensor, komunikasi MQTT, dan monitoring web real-time. Dokumen ini memberikan panduan langkah demi langkah untuk mereproduksi sistem monitoring kebakaran hutan SisTer.
+
+---
 
 ## Daftar Isi
 1. [Persyaratan Sistem](#persyaratan-sistem)
@@ -69,34 +71,39 @@ Dokumen ini memberikan panduan langkah demi langkah untuk mereproduksi sistem mo
 3. [Konfigurasi](#konfigurasi)
 4. [Menjalankan Sistem](#menjalankan-sistem)
 5. [Pengujian](#pengujian)
-6. [Troubleshooting](#troubleshooting)
+6. [Reproduksi Sistem](#reproduksi-sistem)
+7. [Lisensi](#lisensi)
+
 
 ## Persyaratan Sistem
 
-### Hardware
-- CPU: Dual-core atau lebih baik
-- RAM: Minimal 4GB
+### 🖥️ Hardware 
+- CPU: Dual-core atau atau di atasnya
+- RAM: Minimum 4GB
 - Storage: Minimal 1GB free space
 - Network: Koneksi internet stabil
 
-### Software
-- Python 3.8 atau lebih baru
+### 💾 Software
+- Python 3.8 atau yang terbaru
 - pip (Python package manager)
 - Git
 
 ### Dependencies
 ```bash
 # Daftar dependencies yang dibutuhkan
-flask
-paho-mqtt
+- Flask  
+- paho-mqtt  
+- threading  
+- json  
+- logging
 ```
 
-## Instalasi
+## 📥 Instalasi & Setup
 
 ### 1. Clone Repository
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/Project_SisTer.git
+git clone https://github.com/YuuFii/Project_SisTer.git
 cd Project_SisTer
 
 # Buat virtual environment
@@ -169,7 +176,7 @@ def is_fire_condition(data):
 app.run(debug=False, port=5000)
 ```
 
-## Menjalankan Sistem
+## ▶️ Menjalankan Sistem
 
 ### 1. Menjalankan Server Node
 ```bash
@@ -192,7 +199,7 @@ python sensor_node.py --node_id sensor02 --location bandung
 python app.py
 ```
 
-## Pengujian
+## 🧪 Pengujian
 
 ### 1. Pengujian Sensor Node
 - Sensor akan mengirim data setiap 1 detik
@@ -213,28 +220,27 @@ python app.py
 - Dashboard akan menampilkan data sensor real-time
 - Alert akan muncul ketika terdeteksi kebakaran
 
-## Troubleshooting
+## 🔁 Reproduksi Sistem
 
-### 1. Masalah Koneksi MQTT
-```bash
-# Cek koneksi ke broker
-ping broker.hivemq.com
+### 🛠️ Setup Environment
+- Install Python 3.8
+- Install dependencies (`pip install flask paho-mqtt`)
+- Setup MQTT broker (default: `broker.hivemq.com`)
 
-# Cek port MQTT
-telnet broker.hivemq.com 1883
-```
+### ⚙️ Konfigurasi Sensor
+- Sesuaikan parameter di `sensor_node.py`
+- Atur lokasi dan ID sensor
+- Sesuaikan threshold deteksi kebakaran
 
-### 2. Masalah Sensor Node
-- Periksa log untuk melihat status koneksi
-- Verifikasi parameter sensor dalam batas normal
-- Cek koneksi internet
+### 🚀 Deployment
+- Jalankan server node (`python server_node.py`)
+- Jalankan sensor nodes (`python sensor_node.py --node_id ... --location ...`)
+- Jalankan web dashboard (`python app.py`)
 
-### 3. Masalah Server Node
-- Periksa thread pool size
-- Verifikasi topic subscriptions
-- Cek memory usage
+### 🧩 Monitoring
+- Monitor log terminal untuk debugging
+- Cek status sensor melalui web dashboard
+- Verifikasi sistem alert berfungsi saat kondisi kebakaran terdeteksi
 
-### 4. Masalah Web Dashboard
-- Clear browser cache
-- Restart Flask server
-- Cek console browser untuk errors
+## 📝 Lisensi
+Proyek ini menggunakan lisensi bebas untuk keperluan pembelajaran dan pengembangan lebih lanjut.
