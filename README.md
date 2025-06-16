@@ -1,7 +1,7 @@
 # **Wireless Sensor Network Deployment for Detection Forest Fire**
 ![visualisasi-deteksi-kebakaran-dengan-map](https://github.com/user-attachments/assets/7dc9b8fa-0f12-4eb0-a94a-c372d92221da)
 
-Gambar tersebut menunjukkan visualisasi potensi kebakaran di suatu wilayah dengan menggunakan skema warna yang merepresentasikan tingkat intensitas potensi kebakaran. Wilayah dengan potensi kebakaran rendah ditandai dengan warna biru keunguan, sedangkan wilayah dengan potensi kebakaran tinggi diberi warna merah. Visualisasi ini sangat berguna sebagai alat bantu dalam perencanaan mitigasi bencana kebakaran dan pengelolaan sumber daya alam di wilayah tersebut.
+Visualisasi di atas digunakan untuk menunjukkan potensi kebakaran di suatu wilayah dengan menggunakan skema warna yang merepresentasikan tingkat intensitas potensi kebakaran. Wilayah dengan potensi kebakaran rendah ditandai dengan warna biru keunguan, sedangkan wilayah dengan potensi kebakaran tinggi diberi warna merah. Visualisasi ini sangat berguna sebagai alat bantu dalam perencanaan mitigasi bencana kebakaran dan pengelolaan sumber daya alam di wilayah tersebut.
 
 ## Desain Sistem
 
