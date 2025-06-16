@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Forest Fire Heatmap</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <script>
+    const map = L.map('map').setView([0.0, 109.0], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let heatLayer;
+
+    function fetchAndUpdateHeatmap() {
+      fetch('http://localhost:8000/alerts')
+        .then(response => response.json())
+        .then(data => {
+          const heatData = [];
+          const seen = new Set();
+
+          data.alerts.forEach(alert => {
+            alert.sensors.forEach(sensor => {
+              const key = `${sensor.lat},${sensor.lon}`;
+              if (!seen.has(key)) {
+                seen.add(key);
+                const intensity = sensor.data.ISI || 10;
+                heatData.push([sensor.lat, sensor.lon, intensity / 50]);
+              }
+            });
+          });
+
+          // Hapus heatLayer sebelumnya (jika ada)
+          if (heatLayer) {
+            map.removeLayer(heatLayer);
+          }
+
+          // Tambahkan heatLayer baru
+          heatLayer = L.heatLayer(heatData, {
+            radius: 30,
+            blur: 20,
+            maxZoom: 13,
+            gradient: {
+              0.2: 'blue',
+              0.4: 'lime',
+              0.6: 'orange',
+              0.8: 'red'
+            }
+          }).addTo(map);
+        })
+        .catch(error => console.error("Fetch error:", error));
+    }
+
+    // Pertama kali ambil data
+    fetchAndUpdateHeatmap();
+
+    // 🔄 Refresh setiap 10 detik
+    setInterval(fetchAndUpdateHeatmap, 10000);
+  </script>
+</body>
+</html>
