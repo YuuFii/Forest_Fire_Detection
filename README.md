@@ -1,4 +1,4 @@
-# **Wireless Sensor Network Deployment for Detection Forest Fire**
+# **Wireless Sensor Network Deployment for Forest Fire Detection**
 ![visualisasi-deteksi-kebakaran-dengan-map](https://github.com/user-attachments/assets/7dc9b8fa-0f12-4eb0-a94a-c372d92221da)
 
 Visualisasi di atas digunakan untuk menunjukkan potensi kebakaran di suatu wilayah dengan menggunakan skema warna yang merepresentasikan tingkat intensitas potensi kebakaran. Wilayah dengan potensi kebakaran rendah ditandai dengan warna biru keunguan, sedangkan wilayah dengan potensi kebakaran tinggi diberi warna merah. Visualisasi ini sangat berguna sebagai alat bantu dalam perencanaan mitigasi bencana kebakaran dan pengelolaan sumber daya alam di wilayah tersebut.
@@ -59,7 +59,7 @@ Heartbeat akan mengirim pesan untuk mengindikasikan bahwa sensor masih aktif dan
 4. Mengapa Alert system terpisah dari Data Stream?
 Data dalam sensor bertopik sensors/# dan alert bertopik alter/# dipisah untuk memprioritaskan pengiriman alter yang memeiliki tingkat urgensi yang lebih tinggi sehingga peringatan kebarakan dapat disampaikan secara lnagsung setelah diperolehnya data yang mengidikasikan adanya kebakaran. Pemisahan ini juga dilakukan untuk mempermudah filtering dalam dashboard. 
 
-## Reproduce Project SisTer 🔥🌲
+## Reproduce Project Forest Fire Detection 🔥🌲
 
 Sistem Deteksi Dini Kebakaran Hutan berbasis simulasi sensor, komunikasi MQTT, dan monitoring web real-time. Dokumen ini memberikan panduan langkah demi langkah untuk mereproduksi sistem monitoring kebakaran hutan SisTer.
 
