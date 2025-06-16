@@ -11,13 +11,13 @@ Visualisasi di atas digunakan untuk menunjukkan potensi kebakaran di suatu wilay
 
 **✅ HOW (BAGAIMANA SISTEM BEKERJA)**
 
-Diagram komunikasi diatas menggambarkan alur kerja sistem deteksi kebakaran hutan yang terdistribusi mulai dari sensor hingga notifikasi kepada petugas. 
+Diagram komunikasi di atas menggambarkan alur kerja sistem deteksi kebakaran hutan yang terdistribusi mulai dari sensor hingga monitoring pada dashboard. 
 Proses dimulai dari sensor node yang secara berkala membaca data lingkungan seperti suhu, kelembaban, asap, dan PM2.5 setiap detik. 
 Data ini dianalisis secara lokal di perangkat sensor. Jika terdeteksi kondisi anomali yang mengindikasikan adanya potensi kebakaran, 
-maka sensor akan mengirimkan data lengkap ke topik MQTT tertentu. Nmaun jika tidak, hanya heartbeat yang dikirim sebagai sinyal bahwa sensor aktif dan berjalan normal. 
+maka sensor akan mengirimkan data lengkap ke topik MQTT tertentu. Namun jika tidak, hanya heartbeat yang dikirim sebagai sinyal bahwa sensor aktif dan berjalan normal. 
 Data yang dikirim kemudian akan diteruskan oleh Edge Gateway yang telah melakukan subscribe pada topik sensor. Di tahap ini, edge gateway akan menjalankan proses filtering dan agregasi data.
-Jika edge mendeteksi indikasi kebakaran lokal, maka akan segera mengirimkan peringatan dalam format JSON ke server. Sebaliknya, jika tidak ada kejadian penting, maka data agregat akan mengirimkan hearth beat setiap 30 detik ke server 
-Hasil dari analisis ini kemudian disajikan melalui monitoring dashboard dalam bentuk visualisasi peta panas. 
+Jika edge mendeteksi indikasi kebakaran lokal, maka akan segera mengirimkan peringatan dalam format JSON ke server. Sebaliknya, jika tidak ada kejadian penting, maka data agregat akan mengirimkan heartbeat setiap 30 detik ke server. 
+Hasil dari analisis ini kemudian disajikan melalui monitoring dashboard dalam bentuk visualisasi heatmap. 
 
 **🔍 WHY (MENGAPA DIBANGUN DENGAN ARSITEKTUR INI)**
 1. Mengapa Mengirim Heartbeat dan Data Lengkap Secara Terpisah?
@@ -41,9 +41,9 @@ Penentuan threshold oleh server bertujuan untuk meminimalkan alarm palsu (false 
 Diagram diatas menggambarkan arsitektur system yang bekerja berdasarkan arsitketur Publisher-Subscriber dengan menggunakan MQTT Broker oleh HiveMQ Cloud sebagai pusat komunikasinya. Terdapat beberapa Sensor Node yang bekerja untuk mengumpulkan data lingkungan (suhu, kelembapan, dll) dari lokasi masing masing yang kemudian dikirim ke HiveMQ Cloud dengan protokol MQTT. Setiap sensor akan mempublikasi data dalam format JSON dengan topik 
 forest/area/[location]/sensor/[node_id]/[sensor_type] 
 (contoh: forest/area/sumatra/sensor/node1/temperature).
-Broker kemudian akan menerima data dari publisher dan akan meneruskannya kepada subscriber yang berlangganan pada topik terkait yaitu Server Node. 
+Broker kemudian akan menerima data dari publisher dan akan meneruskannya kepada subscriber yang subscribe pada topik terkait yaitu Server Node. 
 Server node akan berlangganan pada semua topik dalam sensor (forest/area/+/sensor/+/+) untuk memperoleh semua data dalam setiap sensor. Kemudian akan dilakukan analisis untuk mendeteksi kebakaran berdasarkan parameter yang telah ditentukan. Apabila terdeteksi bahwa data menunjukan adanya tanda tanda kebakaran maka akan dikirim sebuah pesan dengan topik forest/alert/[location]/[node_id].
-Flask Dahsborad digunakan untuk menampilkan data yang diperoleh sensor melalui sebuah web secara real time.
+Flask Dahsboard digunakan untuk menampilkan data yang diperoleh sensor melalui sebuah web secara real time.
 
 **🔍 WHY (MENGAPA DIBANGUN DENGAN ARSITEKTUR INI)**
 
@@ -53,7 +53,7 @@ Digunakan arsitektur MQTT sehingga setiap node dapat bekerja secara independent 
 2. Mengapa sistem bersifat event-driven?
 Karena kejadian seperti kebakaran hutan memiliki urgensi dalam peringatan yang lebih awal sehingga dipilih pemrosesan yang lebih reaktif yaitu event-driven. Node sensor akan menerima data lingkungan dan node server akan menganalisis data untuk menentukan apakah data lebihi parameter yang menandakan adanya kebakaran hutan. Arsitektur seperti Polling-Based tidak cocok karena sensor harus terus menjawab request dan memiliki latensi yang tinggi, Request-response tidak cocok karena sensor harus menunggu permintaan server sehingga tidak cocok untuk data kontinu. 
 
-3. Megapa digunakan Heartbeat dan LWT?
+3. Mengapa digunakan Heartbeat dan LWT?
 Heartbeat akan mengirim pesan untuk mengindikasikan bahwa sensor masih aktif dan dikirim secara rutin untuk memastikan bahwa node sensor tetap aktif. Kemudian LWT atau Last Will & Testament akan secara langsung mengirimkan pesan bahwa sensor offline apabila sensor mati atau terjadi failure secara mendadak. Keduanya digunakan secara bersamaan sehingga server dapat mengetahui keadaan sensor setiap saat.  
 
 4. Mengapa Alert system terpisah dari Data Stream?
