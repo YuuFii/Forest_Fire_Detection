@@ -1,4 +1,6 @@
 # **Wireless Sensor Network Deployment for Detection Forest Fire**
+![visualisasi-deteksi-kebakaran-dengan-map](https://github.com/user-attachments/assets/7dc9b8fa-0f12-4eb0-a94a-c372d92221da)
+
 
 ## Desain Sistem
 
