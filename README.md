@@ -118,8 +118,8 @@ Sistem Deteksi Dini Kebakaran Hutan berbasis simulasi sensor, komunikasi MQTT, d
 ### 1. Clone Repository & Install Dependencies
 ```bash
 # Clone repository
-git clone https://github.com/YuuFii/Project_SisTer.git
-cd Project_SisTer
+git clone [https://github.com/YuuFii/Project_SisTer.git](https://github.com/YuuFii/Forest_Fire_Detection.git)
+cd Forest_Fire_Detection
 
 # Buat virtual environment (opsional tapi disarankan)
 python -m venv venv
